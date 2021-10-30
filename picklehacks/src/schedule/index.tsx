@@ -7,6 +7,8 @@ import { Card, DatePicker, Modal, Input } from 'antd';
 import moment from 'moment';
 import "antd/dist/antd.css";
 
+import { TOR, ATL, BOS, BKN, CHA, CHI, CLE, DAL, DEN, DET, GSW, HOU, IND, LAC, LAL, MEM, MIA, MIL, MIN, NOP, NYK, OKC, ORL, PHI, PHX, POR, SAC, SAS, UTA, WAS } from 'react-nba-logos';
+
 const { Search } = Input;
 
 function Schedule() {
@@ -30,7 +32,100 @@ function Schedule() {
             "time": "Thu Oct 30 2021",
             "message": "How could they lose! The ref blew the game!!!"
         }
-    ]
+    ];
+
+    const returnLogo = (abbreviation) => {
+        if (abbreviation == "TOR") {
+            return <TOR size={20} />
+        }
+        else if (abbreviation == "ATL") {
+            return <ATL size={20} />
+        }
+        else if (abbreviation == "BOS") {
+            return <BOS size={20} />
+        }
+        else if (abbreviation == "BKN") {
+            return <BKN size={20} />
+        }
+        else if (abbreviation == "CHA") {
+            return <CHA size={20} />
+        }
+        else if (abbreviation == "CHI") {
+            return <CHI size={20} />
+        }
+        else if (abbreviation == "CLE") {
+            return <CLE size={20} />
+        }
+        else if (abbreviation == "DAL") {
+            return <DAL size={20} />
+        }
+        else if (abbreviation == "DEN") {
+            return <DEN size={20} />
+        }
+        else if (abbreviation == "DET") {
+            return <DET size={20} />
+        }
+        else if (abbreviation == "GSW") {
+            return <GSW size={20} />
+        }
+        else if (abbreviation == "HOU") {
+            return <HOU size={20} />
+        }
+        else if (abbreviation == "IND") {
+            return <IND size={20} />
+        }
+        else if (abbreviation == "LAC") {
+            return <LAC size={20} />
+        }
+        else if (abbreviation == "LAL") {
+            return <LAL size={20} />
+        }
+        else if (abbreviation == "MEM") {
+            return <MEM size={20} />
+        }
+        else if (abbreviation == "MIA") {
+            return <MIA size={20} />
+        }
+        else if (abbreviation == "MIL") {
+            return <MIL size={20} />
+        }
+        else if (abbreviation == "MIN") {
+            return <MIN size={20} />
+        }
+        else if (abbreviation == "NOP") {
+            return <NOP size={20} />
+        }
+        else if (abbreviation == "NYK") {
+            return <NYK size={20} />
+        }
+        else if (abbreviation == "OKC") {
+            return <OKC size={20} />
+        }
+        else if (abbreviation == "ORL") {
+            return <ORL size={20} />
+        }
+        else if (abbreviation == "PHI") {
+            return <PHI size={20} />
+        }
+        else if (abbreviation == "PHX") {
+            return <PHX size={20} />
+        }
+        else if (abbreviation == "POR") {
+            return <POR size={20} />
+        }
+        else if (abbreviation == "SAC") {
+            return <SAC size={20} />
+        }
+        else if (abbreviation == "SAS") {
+            return <SAS size={20} />
+        }
+        else if (abbreviation == "UTA") {
+            return <UTA size={20} />
+        }
+        else if (abbreviation == "WAS") {
+            return <WAS size={20} />
+        }
+    };
 
     const gridStyle = {
         width: '25%',
@@ -46,7 +141,7 @@ function Schedule() {
             (result) => {
                 let temp_games = [];
                 for (let i = 0; i < result.data.length; i++) {
-                    temp_games.push([result.data[i].date, result.data[i].home_team.full_name, result.data[i].home_team_score, result.data[i].visitor_team.full_name, result.data[i].visitor_team_score])
+                    temp_games.push([result.data[i].date, result.data[i].home_team.full_name, result.data[i].home_team_score, result.data[i].visitor_team.full_name, result.data[i].visitor_team_score, result.data[i].id, result.data[i].home_team.abbreviation, result.data[i].visitor_team.abbreviation])
                 }
                 t_games = t_games.concat(temp_games);
                 total_pages = result.meta.total_pages;
@@ -63,7 +158,7 @@ function Schedule() {
                     (result) => {
                         let temp_games = [];
                         for (let i = 0; i < result.data.length; i++) {
-                            temp_games.push([new Date(result.data[i].date).toDateString(), result.data[i].home_team.full_name, result.data[i].home_team_score, result.data[i].visitor_team.full_name, result.data[i].visitor_team_score])
+                            temp_games.push([result.data[i].date, result.data[i].home_team.full_name, result.data[i].home_team_score, result.data[i].visitor_team.full_name, result.data[i].visitor_team_score, result.data[i].id, result.data[i].home_team.abbreviation, result.data[i].visitor_team.abbreviation])
                         }
                         t_games = t_games.concat(temp_games);
                     },
@@ -99,10 +194,10 @@ function Schedule() {
                         setIsModalVisible(true);
                     }}>
                         <div>
-                            {game[1]} <strong>{game[2]}</strong>
+                            {returnLogo(game[6])} {game[1]} <strong>{game[2]}</strong>
                         </div>
                         <div>
-                            {game[3]} <strong>{game[4]}</strong>
+                            {returnLogo(game[7])} {game[3]} <strong>{game[4]}</strong>
                         </div>
                     </Card.Grid>
                 );
@@ -134,6 +229,9 @@ function Schedule() {
                     enterButton="Post"
                     size="large"
                     style={{marginTop: 50}}
+                    onSearch={(message) => {
+                        console.log(message);
+                    }}
                 />
             </div>
         </Modal>

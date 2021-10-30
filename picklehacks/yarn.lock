@@ -9587,6 +9587,11 @@ react-app-polyfill@^2.0.0:
     regenerator-runtime "^0.13.7"
     whatwg-fetch "^3.4.1"
 
+react-browser-router@^2.1.2:
+  version "2.1.2"
+  resolved "https://registry.yarnpkg.com/react-browser-router/-/react-browser-router-2.1.2.tgz#06b53049f85d0311efd9f1dada52eaa7e14d8f7e"
+  integrity sha512-6Axukud54NdHMgQEkVDKLPG6bawcu34YVjHdvlCCSehYH1NRGiiDHnhD13J+zkGyAvY/TWEkLGGBUflwu1XkgQ==
+
 react-dev-utils@^11.0.3:
   version "11.0.4"
   resolved "https://registry.yarnpkg.com/react-dev-utils/-/react-dev-utils-11.0.4.tgz#a7ccb60257a1ca2e0efe7a83e38e6700d17aa37a"
@@ -9640,6 +9645,13 @@ react-is@^17.0.1:
   version "17.0.1"
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-17.0.1.tgz#5b3531bd76a645a4c9fb6e693ed36419e3301339"
   integrity sha512-NAnt2iGDXohE5LI7uBnLnqvLQMtzhkiAOLXTmv+qnF9Ky7xAPcX8Up/xWIhxvLVGJvuLiNc4xQLtuqDRzb4fSA==
+
+react-nba-logos@^1.1.2:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/react-nba-logos/-/react-nba-logos-1.1.2.tgz#8e4b150444a8574a21760450c25c556bba1d04ed"
+  integrity sha512-HZL8WyLP6cKxG98suFlTw0hpS2t4N7IFAnKGGd2OcQHsl92G8qOowMjwhnVzI/zbZuiyfYCM/2Tpz+7aKiLtlw==
+  dependencies:
+    prop-types "^15.7.2"
 
 react-refresh@^0.8.3:
   version "0.8.3"
