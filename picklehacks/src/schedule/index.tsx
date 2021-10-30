@@ -3,13 +3,14 @@
 import React, {useEffect, useState} from 'react';
 import './index.css';
 
-import { Card, DatePicker, Modal, Input } from 'antd';
+import { Card, DatePicker, Modal, Input, Row, Col, Select } from 'antd';
 import moment from 'moment';
 import "antd/dist/antd.css";
 
 import { TOR, ATL, BOS, BKN, CHA, CHI, CLE, DAL, DEN, DET, GSW, HOU, IND, LAC, LAL, MEM, MIA, MIL, MIN, NOP, NYK, OKC, ORL, PHI, PHX, POR, SAC, SAS, UTA, WAS } from 'react-nba-logos';
 
 const { Search } = Input;
+const { Option } = Select;
 
 function Schedule() {
     let [games, setGames] = useState([]);
@@ -19,6 +20,12 @@ function Schedule() {
 
     let [players, setPlayers] = useState([]);
     let t_players = [];
+
+    let [homeTeam, setHomeTeam] = useState([]);
+    let [visitorTeam, setVisitorTeam] = useState([]);
+
+    let [homePlayerSeasonAvg, setHomePlayerSeasonAvg] = useState([]);
+    let [visitorPlayerSeasonAvg, setVisitorPlayerSeasonAvg] = useState([]);
 
     const [isModalVisible, setIsModalVisible] = useState(false);
 
@@ -122,6 +129,17 @@ function Schedule() {
         textAlign: 'center',
     };
 
+    const getTeam = (team_id) => {
+        let arr = [];
+        let temp_players = players;
+        for (let i = 0; i < temp_players.length; i++) {
+            if (temp_players[i][2] == team_id) {
+                arr.push(temp_players[i]);
+            }
+        }
+        return arr;
+    };
+
     const getData = () => {
         let page = 1;
         let total_pages = 0;
@@ -166,18 +184,19 @@ function Schedule() {
     };
 
     const getPlayers = () => {
+        console.log("Getting Players");
         let page = 1;
         let total_pages = 0;
-        fetch(`https://balldontlie.io/api/v1/players?&per_page100&page=${page}`)
+        fetch(`https://balldontlie.io/api/v1/players?&per_page=100&page=${page}`)
             .then(res => res.json())
             .then(
             (result) => {
                 let temp_players = [];
                 for (let i = 0; i < result.data.length; i++) {
-                    temp_players.push([result.data[i].first_name, result.data[i].last_name])
+                    temp_players.push([result.data[i].first_name, result.data[i].last_name, result.data[i].team.id, result.data[i].id])
                 }
                 t_players = t_players.concat(temp_players);
-                total_pages = result.meta.total_pages;
+                total_pages = 20;
             },
             (error) => {
                 console.log(error);
@@ -185,13 +204,13 @@ function Schedule() {
         ).then(() => {
             for (let i = 1; i < total_pages; i++) {
                 page++;
-                fetch(`https://balldontlie.io/api/v1/players?&per_page100&page=${page}`)
+                fetch(`https://balldontlie.io/api/v1/players?&per_page=100&page=${page}`)
                     .then(res => res.json())
                     .then(
                     (result) => {
                         let temp_players = [];
                         for (let i = 0; i < result.data.length; i++) {
-                            temp_players.push([result.data[i].first_name, result.data[i].last_name])
+                            temp_players.push([result.data[i].first_name, result.data[i].last_name, result.data[i].team.id, result.data[i].id])
                         }
                         t_players = t_players.concat(temp_players);
                     },
@@ -226,6 +245,9 @@ function Schedule() {
                         setCurrentGame(game)
                         setIsModalVisible(true);
                         getPlayers();
+                        setHomeTeam(getTeam(currentGame[9]));
+                        setVisitorTeam(getTeam(currentGame[10]));
+                        console.log("Clicked Card")
                     }}>
                         <div>
                             <p>{game[8]}</p>
@@ -238,11 +260,79 @@ function Schedule() {
                 );
             })}
 
-        <Modal title="Game Summary" visible={isModalVisible} footer={null} onCancel={() => {
+        <Modal title="Players" visible={isModalVisible} footer={null} onCancel={() => {
             setIsModalVisible(false);
         }}>
-            Goat or Nope
-            {players}
+            <Row>
+                <Col span={12}>
+                    <Select onChange={(value) => {
+                        console.log("VALUE: " + value);
+                        fetch(`https://balldontlie.io/api/v1/season_averages?season=2012&player_ids[]=${value}`)
+                            .then(res => res.json())
+                            .then(
+                            (result) => {
+                                setHomePlayerSeasonAvg([result.data[0].games_played, result.data[0].pts, result.data[0].ast, result.data[0].stl]);
+                            },
+                            (error) => {
+                                console.log(error);
+                            }
+                        );
+                    }} defaultValue={homeTeam[0] || "No Player Selected"}>
+                        {homeTeam.map((player) => {
+                            return <Option value={player[3]}>{player[0]} {player[1]}</Option>
+                        })}
+                    </Select>
+                    <div style={{marginTop: 30}}>
+                        <div>
+                            Games Played: <strong>{homePlayerSeasonAvg[0]}</strong>
+                        </div>
+                        <div>
+                            Points per Game: <strong>{homePlayerSeasonAvg[1]}</strong>
+                        </div>
+                        <div>
+                            Assists per Game: <strong>{homePlayerSeasonAvg[2]}</strong>
+                        </div>
+                        <div>
+                            Steals per Game: <strong>{homePlayerSeasonAvg[3]}</strong>
+                        </div>
+                    </div>
+                </Col>
+                <Col span={12}>
+                    <Select onChange={(value) => {
+                        console.log("VALUE: " + value);
+                        fetch(`https://balldontlie.io/api/v1/season_averages?season=2012&player_ids[]=${value}`)
+                            .then(res => res.json())
+                            .then(
+                            (result) => {
+                                setVisitorPlayerSeasonAvg([result.data[0].games_played, result.data[0].pts, result.data[0].ast, result.data[0].stl]);
+                                console.log("Result: ");
+                                console.log(result.data);
+                            },
+                            (error) => {
+                                console.log(error);
+                            }
+                        );
+                    }} defaultValue={visitorTeam[0] || "No Player Selected"}>
+                        {visitorTeam.map((player) => {
+                            return <Option value={player[3]}>{player[0]} {player[1]}</Option>
+                        })}
+                    </Select>
+                    <div style={{marginTop: 30}}>
+                        <div>
+                            Games Played: <strong>{visitorPlayerSeasonAvg[0]}</strong>
+                        </div>
+                        <div>
+                            Points per Game: <strong>{visitorPlayerSeasonAvg[1]}</strong>
+                        </div>
+                        <div>
+                            Assists per Game: <strong>{visitorPlayerSeasonAvg[2]}</strong>
+                        </div>
+                        <div>
+                            Steals per Game: <strong>{visitorPlayerSeasonAvg[3]}</strong>
+                        </div>
+                    </div>
+                </Col>
+            </Row>
         </Modal>
         </div>
     );
