@@ -33,7 +33,6 @@ function Schedule() {
             "message": "How could they lose! The ref blew the game!!!"
         }
     ];
-
     const returnLogo = (abbreviation) => {
         if (abbreviation == "TOR") {
             return <TOR size={20} />
@@ -158,7 +157,10 @@ function Schedule() {
                     (result) => {
                         let temp_games = [];
                         for (let i = 0; i < result.data.length; i++) {
-                            temp_games.push([result.data[i].date, result.data[i].home_team.full_name, result.data[i].home_team_score, result.data[i].visitor_team.full_name, result.data[i].visitor_team_score, result.data[i].id, result.data[i].home_team.abbreviation, result.data[i].visitor_team.abbreviation])
+                            temp_games.push([result.data[i].date, result.data[i].home_team.full_name, result.data[i].home_team_score, 
+                                            result.data[i].visitor_team.full_name, result.data[i].visitor_team_score, result.data[i].id,
+                                            result.data[i].home_team.abbreviation, result.data[i].visitor_team.abbreviation,
+                                            result.data[i].status])
                         }
                         t_games = t_games.concat(temp_games);
                     },
@@ -194,6 +196,7 @@ function Schedule() {
                         setIsModalVisible(true);
                     }}>
                         <div>
+                            <p>{game[8]}</p>
                             {returnLogo(game[6])} {game[1]} <strong>{game[2]}</strong>
                         </div>
                         <div>
@@ -206,7 +209,8 @@ function Schedule() {
         <Modal title="Game Summary" visible={isModalVisible} footer={null} onCancel={() => {
             setIsModalVisible(false);
         }}>
-            <p>Date: {new Date(currentGame[0]).toDateString()}</p>
+            
+            <p>Game Status: {currentGame[8]}</p>
             <br />
             <p>Home Team: {currentGame[1]} <strong>{currentGame[2]}</strong></p>
             <p>Away Team: {currentGame[3]} <strong>{currentGame[4]}</strong></p>
