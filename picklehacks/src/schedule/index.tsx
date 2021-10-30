@@ -196,14 +196,15 @@ function Schedule() {
                     temp_players.push([result.data[i].first_name, result.data[i].last_name, result.data[i].team.id, result.data[i].id])
                 }
                 t_players = t_players.concat(temp_players);
-                total_pages = 20;
+                total_pages = result.meta.total_pages;
+                page = total_pages;
             },
             (error) => {
                 console.log(error);
             }
         ).then(() => {
             for (let i = 1; i < total_pages; i++) {
-                page++;
+                page--;
                 fetch(`https://balldontlie.io/api/v1/players?&per_page=100&page=${page}`)
                     .then(res => res.json())
                     .then(
@@ -267,7 +268,7 @@ function Schedule() {
                 <Col span={12}>
                     <Select onChange={(value) => {
                         console.log("VALUE: " + value);
-                        fetch(`https://balldontlie.io/api/v1/season_averages?season=2012&player_ids[]=${value}`)
+                        fetch(`https://balldontlie.io/api/v1/season_averages?season=2021&player_ids[]=${value}`)
                             .then(res => res.json())
                             .then(
                             (result) => {
@@ -300,7 +301,7 @@ function Schedule() {
                 <Col span={12}>
                     <Select onChange={(value) => {
                         console.log("VALUE: " + value);
-                        fetch(`https://balldontlie.io/api/v1/season_averages?season=2012&player_ids[]=${value}`)
+                        fetch(`https://balldontlie.io/api/v1/season_averages?season=2021&player_ids[]=${value}`)
                             .then(res => res.json())
                             .then(
                             (result) => {

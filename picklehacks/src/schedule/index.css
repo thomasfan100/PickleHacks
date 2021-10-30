@@ -5,3 +5,7 @@
     margin-right: 35px;
     margin: 10px;
 }
+
+.container {
+    background-image: url('../navbar/images/background.jpg');    
+}
