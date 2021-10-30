@@ -17,22 +17,13 @@ function Schedule() {
     let [month, setMonth] = useState(new Date().getMonth());
     let t_games = [];
 
+    let [players, setPlayers] = useState([]);
+    let t_players = [];
+
     const [isModalVisible, setIsModalVisible] = useState(false);
 
     let [currentGame, setCurrentGame] = useState([]);
 
-    let messages = [
-        {
-            "id": 13123,
-            "time": "Thu Oct 28 2021",
-            "message": "Great game!"
-        },
-        {
-            "id": 543543,
-            "time": "Thu Oct 30 2021",
-            "message": "How could they lose! The ref blew the game!!!"
-        }
-    ];
     const returnLogo = (abbreviation) => {
         if (abbreviation == "TOR") {
             return <TOR size={20} />
@@ -140,7 +131,7 @@ function Schedule() {
             (result) => {
                 let temp_games = [];
                 for (let i = 0; i < result.data.length; i++) {
-                    temp_games.push([result.data[i].date, result.data[i].home_team.full_name, result.data[i].home_team_score, result.data[i].visitor_team.full_name, result.data[i].visitor_team_score, result.data[i].id, result.data[i].home_team.abbreviation, result.data[i].visitor_team.abbreviation])
+                    temp_games.push([result.data[i].date, result.data[i].home_team.full_name, result.data[i].home_team_score, result.data[i].visitor_team.full_name, result.data[i].visitor_team_score, result.data[i].id, result.data[i].home_team.abbreviation, result.data[i].visitor_team.abbreviation, result.data[i].status, result.data[i].home_team.id, result.data[i].visitor_team.id])
                 }
                 t_games = t_games.concat(temp_games);
                 total_pages = result.meta.total_pages;
@@ -160,7 +151,7 @@ function Schedule() {
                             temp_games.push([result.data[i].date, result.data[i].home_team.full_name, result.data[i].home_team_score, 
                                             result.data[i].visitor_team.full_name, result.data[i].visitor_team_score, result.data[i].id,
                                             result.data[i].home_team.abbreviation, result.data[i].visitor_team.abbreviation,
-                                            result.data[i].status])
+                                            result.data[i].status, result.data[i].home_team.id, result.data[i].visitor_team.id])
                         }
                         t_games = t_games.concat(temp_games);
                     },
@@ -169,6 +160,46 @@ function Schedule() {
                     }
                 ).then(() => {
                     setGames(t_games);
+                });
+            }
+        });
+    };
+
+    const getPlayers = () => {
+        let page = 1;
+        let total_pages = 0;
+        fetch(`https://balldontlie.io/api/v1/players?&per_page100&page=${page}`)
+            .then(res => res.json())
+            .then(
+            (result) => {
+                let temp_players = [];
+                for (let i = 0; i < result.data.length; i++) {
+                    temp_players.push([result.data[i].first_name, result.data[i].last_name])
+                }
+                t_players = t_players.concat(temp_players);
+                total_pages = result.meta.total_pages;
+            },
+            (error) => {
+                console.log(error);
+            }
+        ).then(() => {
+            for (let i = 1; i < total_pages; i++) {
+                page++;
+                fetch(`https://balldontlie.io/api/v1/players?&per_page100&page=${page}`)
+                    .then(res => res.json())
+                    .then(
+                    (result) => {
+                        let temp_players = [];
+                        for (let i = 0; i < result.data.length; i++) {
+                            temp_players.push([result.data[i].first_name, result.data[i].last_name])
+                        }
+                        t_players = t_players.concat(temp_players);
+                    },
+                    (error) => {
+                        console.log(error);
+                    }
+                ).then(() => {
+                    setPlayers(t_players);
                 });
             }
         });
@@ -194,6 +225,7 @@ function Schedule() {
                     <Card.Grid style={gridStyle, {display: ((new Date(game[0]).getDate() == day) && (new Date(game[0]).getMonth() == month)) ? "block" : "none"}} onClick={() => {
                         setCurrentGame(game)
                         setIsModalVisible(true);
+                        getPlayers();
                     }}>
                         <div>
                             <p>{game[8]}</p>
@@ -209,35 +241,8 @@ function Schedule() {
         <Modal title="Game Summary" visible={isModalVisible} footer={null} onCancel={() => {
             setIsModalVisible(false);
         }}>
-            
-            <p>Game Status: {currentGame[8]}</p>
-            <br />
-            <p>Home Team: {currentGame[1]} <strong>{currentGame[2]}</strong></p>
-            <p>Away Team: {currentGame[3]} <strong>{currentGame[4]}</strong></p>
-            
-            <div style={{marginTop: 50}}>
-                <hr />
-                <p><strong>Game Thread</strong></p>
-                <hr />
-                {messages.map((message) => {
-                    return (
-                        <div className="message">
-                            <p>{message.time}</p>
-                            <p>{message.message}</p>
-                        </div>
-                    );
-                })}
-                <Search
-                    placeholder="Post a message about the game!"
-                    allowClear
-                    enterButton="Post"
-                    size="large"
-                    style={{marginTop: 50}}
-                    onSearch={(message) => {
-                        console.log(message);
-                    }}
-                />
-            </div>
+            Goat or Nope
+            {players}
         </Modal>
         </div>
     );
